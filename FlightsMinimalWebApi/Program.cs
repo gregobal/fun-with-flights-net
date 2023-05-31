@@ -1,34 +1,74 @@
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<FlightsDb>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
+});
+
 var app = builder.Build();
 
-var aircrafts = new List<AircraftsData>();
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<FlightsDb>();
+}
 
-app.MapGet("/aircrafts", () => aircrafts);
-app.MapGet("/aircrafts/{code}", 
-    (string code) => aircrafts.FirstOrDefault(a => a.AircraftCode == code));
-app.MapPost("/aircrafts", (AircraftsData aircraft) => aircrafts.Add(aircraft));
-app.MapPut("/aircrafts", (AircraftsData aircraft) =>
+app.MapGet("/aircrafts", async (FlightsDb db) => await db.Aircrafts.ToListAsync());
+
+app.MapGet("/aircrafts/{code}", async (string code, FlightsDb db) =>
+    await db.Aircrafts.FirstOrDefaultAsync(a => a.Code == code) is Aircraft aircraft
+        ? Results.Ok(aircraft)
+        : Results.NotFound());
+
+app.MapPost("/aircrafts", async ([FromBody] Aircraft aircraft, FlightsDb db) =>
 {
-    var idx = aircrafts.FindIndex(a => a.AircraftCode == aircraft.AircraftCode);
-    if (idx < 0)
-        throw new Exception("Not found");
-    aircrafts[idx] = aircraft;
+    db.Aircrafts.Add(aircraft);
+    await db.SaveChangesAsync();
+    return Results.Created($"/aircrafts/{aircraft.Code}", aircraft);
 });
-app.MapDelete("/aircrafts/{code}", (string code) =>
+
+app.MapPut("/aircrafts",
+    async ([FromBody] Aircraft aircraft, FlightsDb db) =>
+    {
+        var founded = db.Aircrafts.FindAsync(aircraft.Code).Result;
+        if (founded is null)
+            return Results.NotFound();
+        founded.Model = aircraft.Model;
+        founded.Range = aircraft.Range;
+        await db.SaveChangesAsync();
+        return Results.NoContent();
+    });
+
+app.MapDelete("/aircrafts/{code}", async (string code, FlightsDb db) =>
 {
-    var idx = aircrafts.FindIndex(a => a.AircraftCode == code);
-    if (idx < 0)
-        throw new Exception("Not found");
-    aircrafts.RemoveAt(idx);
+    var founded = db.Aircrafts.FindAsync(code).Result;
+    if (founded is null)
+        return Results.NotFound();
+    db.Aircrafts.Remove(founded);
+    await db.SaveChangesAsync();
+    return Results.NoContent();
 });
+
+app.UseHttpsRedirection();
 
 app.Run();
 
-public class AircraftsData
+public class FlightsDb : DbContext
 {
-    public string AircraftCode { get; set; } = String.Empty;
-    public string Model { get; set; } = String.Empty;
-    public int Range { get; set; }
+    public FlightsDb(DbContextOptions<FlightsDb> options) :
+        base(options)
+    {
+    }
+
+    public DbSet<Aircraft> Aircrafts => Set<Aircraft>();
+}
+
+[Table("aircrafts_data")]
+public class Aircraft
+{
+    [Key] [Column("aircraft_code")] public string Code { get; set; } = "000";
+    [Column("model", TypeName = "jsonb")] public string Model { get; set; } = String.Empty;
+    [Column("range")] public int Range { get; set; }
 }
