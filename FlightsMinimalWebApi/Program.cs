@@ -1,5 +1,9 @@
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddDbContext<FlightsDb>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
@@ -11,24 +15,29 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
+
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<FlightsDb>();
 }
 
-app.MapGet("/aircrafts", async (IAircraftRepository repository) => 
-    Results.Ok(await repository.GetAircraftsAsync()));
+app.MapGet("/aircrafts", async (IAircraftRepository repository) =>
+        Results.Ok(await repository.GetAircraftsAsync()))
+    .WithTags("Read");
 
 app.MapGet("/aircrafts/{code}", async (string code, IAircraftRepository repository) =>
-    await repository.GetAircraftAsync(code) is Aircraft aircraft
-        ? Results.Ok(aircraft)
-        : Results.NotFound());
+        await repository.GetAircraftAsync(code) is Aircraft aircraft
+            ? Results.Ok(aircraft)
+            : Results.NotFound())
+    .WithTags("Read");
 
 app.MapPost("/aircrafts", async ([FromBody] Aircraft aircraft, IAircraftRepository repository) =>
 {
     await repository.CreateAircraftAsync(aircraft);
     await repository.SaveAsync();
     return Results.Created($"/aircrafts/{aircraft.Code}", aircraft);
-});
+}).WithTags("Mutate");
 
 app.MapPut("/aircrafts",
     async ([FromBody] Aircraft aircraft, IAircraftRepository repository) =>
@@ -36,14 +45,14 @@ app.MapPut("/aircrafts",
         await repository.UpdateAircraftAsync(aircraft);
         await repository.SaveAsync();
         return Results.NoContent();
-    });
+    }).WithTags("Mutate");
 
 app.MapDelete("/aircrafts/{code}", async (string code, IAircraftRepository repository) =>
 {
     await repository.DeleteAircraftAsync(code);
     await repository.SaveAsync();
     return Results.NoContent();
-});
+}).WithTags("Mutate");
 
 app.UseHttpsRedirection();
 
