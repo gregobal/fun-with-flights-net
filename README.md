@@ -1,2 +1,13 @@
-# fun-with-flights-net
-Solution for study and fun with C# &amp; .net
+# васиздас:
+### просто солюшн с небольшими проектами в постижении инструментария .нет
+
+## DataSource - там есть источник данных для развлечения
+Директория DataSource, файл demo.sql <br>
+Запуская скрипт Program.cs есть шанс воссоздать БД с данными в докер контейнере<br>
+(Источник дампа - <a href="https://postgrespro.ru/education/demodb">тут</a>)
+
+## FlightsMinimalWebApi
+Мини проджект для круда в одну таблицу используя минимал подход для построения апи
+на основе .нет
+
+## One more...
