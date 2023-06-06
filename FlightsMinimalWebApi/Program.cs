@@ -1,5 +1,3 @@
-using FlightsMinimalWebApi.Auth;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +30,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddDbContext<FlightsDb>(options =>
+builder.Services.AddDbContext<FlightsDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
 });
@@ -72,7 +70,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 
     using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<FlightsDb>();
+    var db = scope.ServiceProvider.GetRequiredService<FlightsDbContext>();
 }
 
 app.MapGet("/login", [AllowAnonymous]
@@ -96,19 +94,19 @@ app.MapGet("/aircrafts", async (IAircraftRepository repository) =>
     .WithTags("Read");
 
 app.MapGet("/aircrafts/{code}", async (string code, IAircraftRepository repository) =>
-        await repository.GetAircraftAsync(code) is Aircraft aircraft
+        await repository.GetAircraftAsync(code) is AircraftsDatum aircraft
             ? Results.Ok(aircraft)
             : Results.NotFound())
     .WithTags("Read");
 
-app.MapPost("/aircrafts", [Authorize] async ([FromBody] Aircraft aircraft, IAircraftRepository repository) =>
+app.MapPost("/aircrafts", [Authorize] async ([FromBody] AircraftsDatum aircraft, IAircraftRepository repository) =>
 {
     await repository.CreateAircraftAsync(aircraft);
     await repository.SaveAsync();
-    return Results.Created($"/aircrafts/{aircraft.Code}", aircraft);
+    return Results.Created($"/aircrafts/{aircraft.AircraftCode}", aircraft);
 }).WithTags("Mutate");
 
-app.MapPut("/aircrafts", [Authorize] async ([FromBody] Aircraft aircraft, IAircraftRepository repository) =>
+app.MapPut("/aircrafts", [Authorize] async ([FromBody] AircraftsDatum aircraft, IAircraftRepository repository) =>
 {
     await repository.UpdateAircraftAsync(aircraft);
     await repository.SaveAsync();
