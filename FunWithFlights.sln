@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightsMinimalWebApi", "Fli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSource", "DataSource\DataSource.csproj", "{EA60367D-F89C-4562-A300-8A431094099F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flights.Models", "Flights.Models\Flights.Models.csproj", "{D22C5960-51B7-40BB-8A46-8F4A0FC86493}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flights.Dal", "Flights.Dal\Flights.Dal.csproj", "{19A4A337-958E-4518-9C82-89D1C4821055}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{EA60367D-F89C-4562-A300-8A431094099F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA60367D-F89C-4562-A300-8A431094099F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA60367D-F89C-4562-A300-8A431094099F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D22C5960-51B7-40BB-8A46-8F4A0FC86493}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D22C5960-51B7-40BB-8A46-8F4A0FC86493}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D22C5960-51B7-40BB-8A46-8F4A0FC86493}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D22C5960-51B7-40BB-8A46-8F4A0FC86493}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19A4A337-958E-4518-9C82-89D1C4821055}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19A4A337-958E-4518-9C82-89D1C4821055}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19A4A337-958E-4518-9C82-89D1C4821055}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19A4A337-958E-4518-9C82-89D1C4821055}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
