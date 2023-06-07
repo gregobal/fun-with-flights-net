@@ -1,6 +1,6 @@
 namespace Flights.Dal.Repos.Base;
 
-public interface IRepo<T, in TP>: IDisposable
+public interface IRepo<T>: IDisposable
 {
     int Add(T entity, bool persist = true);
     int AddRange(IEnumerable<T> entities, bool persist = true);
@@ -8,9 +8,9 @@ public interface IRepo<T, in TP>: IDisposable
     int UpdateRange(IEnumerable<T> entities, bool persist = true);
     int Delete(T entity, bool persist = true);
     int DeleteRange(IEnumerable<T> entities, bool persist = true);
-    T? Find(TP key);
-    T? FindAsNoTracking(TP key);
-    T? FindIgnoreQueryFilters(TP key);
+    T? Find(string id);
+    T? FindAsNoTracking(string id);
+    T? FindIgnoreQueryFilters(string id);
     IEnumerable<T> GetAll();
     IEnumerable<T> GetAllIgnoreQueryFilters();
     void ExecuteQuery(string sql, object[] sqlParametersObjects);

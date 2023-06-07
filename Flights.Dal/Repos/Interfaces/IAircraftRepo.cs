@@ -3,6 +3,6 @@ using Flights.Models.Entities;
 
 namespace Flights.Dal.Repos.Interfaces;
 
-public interface IAircraftRepo: IRepo<Aircraft, string?>
+public interface IAircraftRepo: IRepo<Aircraft>
 {
 }

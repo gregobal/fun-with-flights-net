@@ -44,7 +44,7 @@ public partial class FlightsDbContext : DbContext
                 .HasNoKey()
                 .ToView("aircrafts", "bookings");
 
-            entity.Property(e => e.AircraftCode)
+            entity.Property(e => e.Id)
                 .HasMaxLength(3)
                 .IsFixedLength()
                 .HasComment("Aircraft code, IATA")

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Flights.Dal.Repos;
 
-public class AircraftRepo: BaseRepo<Aircraft, string?>, IAircraftRepo
+public class AircraftRepo: BaseRepo<Aircraft>, IAircraftRepo
 {
     public AircraftRepo(FlightsDbContext context) : base(context)
     {

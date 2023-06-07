@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Flights.Dal.Repos.Base;
 
-public abstract class BaseRepo<T, TP> : IRepo<T, TP> where T : BaseEntity<TP>, new()
+public abstract class BaseRepo<T> : IRepo<T> 
+    where T : BaseEntity, new()
 {
     private readonly bool _disposeContext;
     public FlightsDbContext Context { get; }
@@ -28,13 +29,13 @@ public abstract class BaseRepo<T, TP> : IRepo<T, TP> where T : BaseEntity<TP>, n
 
     public virtual IEnumerable<T> GetAllIgnoreQueryFilters() => Table.IgnoreQueryFilters();
     
-    public virtual T? Find(TP key) => Table.Find(key);
+    public virtual T? Find(string id) => Table.Find(id);
 
-    public virtual T? FindAsNoTracking(TP key) => Table.AsNoTrackingWithIdentityResolution()
-        .FirstOrDefault(x => Equals(x.Key, key));
+    public virtual T? FindAsNoTracking(string id) => Table.AsNoTrackingWithIdentityResolution()
+        .FirstOrDefault(x => x.Id == id);
 
-    public virtual T? FindIgnoreQueryFilters(TP key) => Table.IgnoreQueryFilters()
-        .FirstOrDefault(x => Equals(x.Key, key));
+    public virtual T? FindIgnoreQueryFilters(string id) => Table.IgnoreQueryFilters()
+        .FirstOrDefault(x => x.Id == id);
 
     public void ExecuteQuery(string sql, object[] sqlParametersObjects) => Context.Database
         .ExecuteSqlRaw(sql, sqlParametersObjects);

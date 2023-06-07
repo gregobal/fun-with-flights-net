@@ -5,15 +5,13 @@ using Flights.Models.Entities.Base;
 
 namespace Flights.Models.Entities;
 
-public partial class Aircraft : BaseEntity<string?>
+public partial class Aircraft : BaseEntity
 {
-    [NotMapped]
-    public override string? Key => AircraftCode;
-
     /// <summary>
     /// Aircraft code, IATA
     /// </summary>
-    public string? AircraftCode { get; set; }
+    [Column("aircraft_code")]
+    public override string? Id { get; set; }
 
     /// <summary>
     /// Aircraft model

@@ -1,6 +1,6 @@
 namespace Flights.Models.Entities.Base;
 
-public abstract class BaseEntity<T>
+public abstract class BaseEntity
 {
-    public abstract T Key { get; }
+    public abstract string? Id { get; set; }
 }
